@@ -4,7 +4,6 @@ var app = express();
 var server=require('http').Server(app);
 var io=require('socket.io')(server);
 var _=require('lodash');
-app.listen(process.env.PORT || 3000);
 server.listen(process.env.PORT || 3000);
 app.use(express.static(__dirname+'/public'));
 app.set('views', __dirname+"/views");
