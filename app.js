@@ -1,4 +1,5 @@
 var createError = require('http-errors');
+var fs=require('fs');
 var express = require('express');
 var app = express();
 var server=require('http').Server(app);
@@ -10,6 +11,7 @@ app.set('views', __dirname+"/views");
 app.set('view engine', 'ejs');
 var arr=[];
 io.on('connection',function(socket){
+  fs.writeFileSync('./data.json',"[]");
   var user="";
   socket.on('Register',function(data){
     user=data;
@@ -39,7 +41,15 @@ io.on('connection',function(socket){
     socket.broadcast.emit('test',{user:user,useronline:arr});
   });
   socket.on('client-send-mess',function(data){
-    io.sockets.emit('sever-send-mess',{text:data.text,user:data.user});
+    var datafile=fs.readFileSync('./data.json');
+  
+    datafilejson=JSON.parse(datafile);
+    datafilejson.push(data);
+    fs.writeFileSync('./data.json',JSON.stringify(datafilejson),(err)=>{
+      if(err) throw err;
+      console.log("OK Fine");
+    })
+    io.sockets.emit('sever-send-mess',{time:data.time,text:data.text,user:data.user});
   })
 });
 

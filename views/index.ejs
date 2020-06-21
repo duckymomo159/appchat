@@ -64,20 +64,20 @@
                   $('#boxchat').append(now+' '+msg.user+' vừa thoát \n');
                   $('#useronline').html('');
                   msg.useronline.forEach(e=>{
-                    $('#useronline').append(e);
+                    $('#useronline').append(e+'\n');
                   })
             });
             //gửi tin nhắn
             socket.on('sever-send-mess',function(data){
-              var d=new Date();
-                var now='('+d.getDay()+'-'+d.getMonth()+'-'+d.getFullYear()
-                +' '+d.getHours()+':'+d.getMinutes()+':'+d.getSeconds()+')';
-              $('#boxchat').append(now+' '+data.user+":"+data.text+"\n");
+              $('#boxchat').append(data.time+' '+data.user+":"+data.text+"\n");
             });
 
             $('#sendMessage').on('click',function(){
               var text=$('#textMess').val();
-              socket.emit('client-send-mess',{text:text,user:$('#name1').text()});
+              var d=new Date();
+              var now='('+d.getDay()+'-'+d.getMonth()+'-'+d.getFullYear()
+              +' '+d.getHours()+':'+d.getMinutes()+':'+d.getSeconds()+')';
+              socket.emit('client-send-mess',{time:now,text:text,user:$('#name1').text()});
               $('#textMess').val('');
             });
             //event enter
