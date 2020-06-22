@@ -5,10 +5,16 @@ var app = express();
 var server=require('http').Server(app);
 var io=require('socket.io')(server);
 var _=require('lodash');
+var bodyParser=require('body-parser');
+var find=require('./database/find.js');
 server.listen(process.env.PORT || 3000);
 app.use(express.static(__dirname+'/public'));
 app.set('views', __dirname+"/views");
 app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(bodyParser.json());
 var arr=[];
 io.on('connection',function(socket){
   fs.writeFileSync('./data.json',"[]");
@@ -54,6 +60,28 @@ io.on('connection',function(socket){
 });
 
 app.get('/',function(req,res){
-  res.render('index',{title:"hello"});
+  res.render('login',{title:"hello"});
 });
+app.post('/login',function(req,res){
+  // res.render('login',{title:"hello"});
+  console.log("OKOKOKOK");
+});
+app.get('/registry',function(req,res){
+  res.render('registry',{state:"ok"});
+})
+app.post('/check',function(req,res){
+  try{
+  find(req.body).then().then((err,rs)=>{
+    console.log(rs);
+  }).then((err,rs)=>{
+    console.log(rs);
+  });
+  var check=require('./database/login');
+  console.log(check(req.body));
+  res.render('login');
+  }
+  catch(e){
+    res.render('registry',{state:"fail"});
+  }
+})
 module.exports = app;
