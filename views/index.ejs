@@ -9,48 +9,50 @@
       var socket=io();
       $(document).ready(function(){
         $('textarea').html('');
-        $('#click').show();
-        $('#show').hide();
+//         $('#click').show();
+//         $('#show').hide();
         $('#user').mouseover(function(){
         $('#dropdown-content').css('display','block');
         });
         $('#user').mouseout(function(){
         $('#dropdown-content').css('display','none');
         });
-        var name1="";
-        $('#click').on('click',function(e){
-          e.stopImmediatePropagation();
-          e.preventDefault();
-          var text=prompt("Username");
-          name1=text;
-          if(text!=null)
-          {
-            socket.emit('Register',text);
-            text=null;
-          }
-        });
-        socket.on('kq',function(kq){
-              if(kq=="fail")
-              {
-                alert("tên đăng nhập đã tồn tại");
-              }
-              else
-              {
-                if(kq=="success"){
-                  alert("đăng nhập thành công");
-                  $('#click').hide();
-                  $('#show').show();
-                  $('#name1').html(name1);
-                  $('#boxchat').html('');
+//          var name1=<%= title %>;
+//          $('#name1').html(name1);
+          $('#boxchat').html('');
+//         var name1="";
+//         $('#click').on('click',function(e){
+//           e.stopImmediatePropagation();
+//           e.preventDefault();
+//           var text=prompt("Username");
+//           if(text!=null)
+//           {
+            socket.emit('Register','<%- username %>');
+//             text=null;
+//           }
+//         });
+//         socket.on('kq',function(kq){
+//               if(kq=="fail")
+//               {
+//                 alert("tên đăng nhập đã tồn tại");
+//               }
+//               else
+//               {
+//                 if(kq=="success"){
+//                   alert("đăng nhập thành công");
+//                   $('#click').hide();
+//                   $('#show').show();
+//                   $('#name1').html(name1);
+//                   $('#boxchat').html('');
                   socket.on('arr',function(arr){
                     $('#useronline').html('');
                     arr.forEach(function(e){
                       $('#useronline').append(e+"\n");
                     })
                   });
-                }
-              }
-            });
+//                 }
+//               }
+//             });
             socket.on('thongbao',function(data){
               var d=new Date();
                 var now='('+d.getDay()+'-'+d.getMonth()+'-'+d.getFullYear()
@@ -100,16 +102,17 @@
           var user=$('#name1').text();
           socket.emit('logout',user);
           $('#boxchat').html('');
-          $('#click').show();
-          $('#show').hide();
+//           $('#click').show();
+//           $('#show').hide();
+            location.href="/";
         });
     </script>
   </head>
   <body>
-    <button id='click'>Đăng ký để chat</button>
+<!--     <button id='click'>Đăng ký để chat</button> -->
     <div id='show'>
         <div id='user'>
-          <div id="name">Hello <span id="name1"></span></div>
+          <div id="name">Hello <span id="name1"><%= username %></span></div>
           <div id="dropdown-content">
             <a href='#' id='logout'>Logout</a>
           </div>

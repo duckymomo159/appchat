@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <% if (state == "username"){ %>
+    	<script type="text/javascript"> alert("Username khong ton tai!!!");</script>
+	<% } %>
+	<% if (state == "pass"){ %>
+    	<script type="text/javascript"> alert("Sai mat khau!!!");</script>
+	<% } %>
+	<% if (state == "exist"){ %>ày
+    	<script type="text/javascript"> alert("User đã có người sử dụng!!!");</script>
+	<% } %>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="javascripts/jquery.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<style>
+    .error{
+        outline: 1px solid red;
+    }
+	</style>
+    <script type="text/javascript">
+    $(document).ready(function(){
+    	$.validator.addMethod("PASSWORD",function(value,element){
+                return this.optional(element) || /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,16}$/i.test(value);
+            },"Passwords are 8-16 characters with uppercase letters, lowercase letters and at least one number.");
+    $('#submit').click(function(){
+     if($('#username').val() == '' || $('#pwd').val() == ''){
+     	$('#username').addClass("error");
+     	$('#pwd').addClass("error");
+     	alert("User name and password isn't empty!!!")
+      	return false;
+   		} else{
+   			$('#username').removeClass("error");
+   			$('#pwd').removeClass("error");
+   			return true;
+   		}
+
+	});
+});
+    </script>
+	</head>
+	<body>
+		<div class="container">
+		  <form action="./person" id="myform" method="post">
+		    <div class="form-group">
+		      <label for="username">User name:</label>
+		      <input type="text" class="form-control" id="username" placeholder="Enter username" name="username">
+		    </div>
+		    <div class="form-group">
+		      <label for="pwd">Password:</label>
+		      <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pwd">
+		    </div>
+		    <button id="submit" type="submit" class="btn btn-default">Đăng nhập</button>
+		    <button id="submit" type="button" onclick="location.href='/registry'" class="btn btn-default">Đăng ký</button>
+		  </form>
+		</div>
+	</body>
+</html>

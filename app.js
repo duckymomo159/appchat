@@ -16,22 +16,24 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 var arr=[];
+
 io.on('connection',function(socket){
   fs.writeFileSync('./data.json',"[]");
   var user="";
   socket.on('Register',function(data){
     user=data;
-    if(arr.includes(data))
-    {
-      socket.emit('kq',"fail");
-    }
-    else{
+    console.log("DATA",user);
+//    if(arr.includes(data))
+//    {
+//      socket.emit('kq',"fail");
+//    }
+//    else{
       arr.push(data);
       console.log(arr);
-      socket.emit('kq',"success");
+//      socket.emit('kq',"success");
       io.sockets.emit('arr',arr);
       socket.broadcast.emit('thongbao',data+" vừa tham gia");
-    }
+//    }
   });
   socket.on('logout',function(btc){
     console.log(btc);
@@ -60,25 +62,62 @@ io.on('connection',function(socket){
 });
 
 app.get('/',function(req,res){
-  res.render('login',{title:"hello"});
+  res.render('dangnhap',{title:"hello",state:"ok"});
 });
-app.post('/login',function(req,res){
-  // res.render('login',{title:"hello"});
-  console.log("OKOKOKOK");
-});
+
+       // dang nhap
+       app.post('/person', function(req, res){
+        var personInfo = req.body; //Get the parsed information
+        if(arr.includes(req.body.username)){
+            res.render("dangnhap",{title:"Đăng nhập",state:"exist"});
+        }
+        var mongodb = require("mongodb");
+        var mongclient = mongodb.MongoClient;
+        mongclient.connect("mongodb://localhost:27017/",function(err, db){
+            var dbo = db.db("appchat");
+            if(err) {
+                console.log('abc',err);
+            } else {
+                console.log(personInfo.username);
+                dbo.collection("appchat").findOne({username:personInfo.username},
+                    function(err, result){
+                        if(result){
+                            console.log(result);
+                            if(result.pass == personInfo.pwd){
+                                db.close();
+                                res.render('index',{title:"hello",username:result.username});
+
+                            } else {
+                                res.render("dangnhap",{state:"pass", title:"dangnhap"})
+                            }
+                        } else {
+                            res.render("dangnhap",{state:"username", title:"dangnhap"})
+                        }
+                    })
+
+
+            }
+        })
+        });
+//app.post('/login',function(req,res){
+//  // res.render('login',{title:"hello"});
+//  console.log("OKOKOKOK");
+//});
 app.get('/registry',function(req,res){
   res.render('registry',{state:"ok"});
 })
 app.post('/check',function(req,res){
   try{
-  find(req.body).then().then((err,rs)=>{
-    console.log(rs);
-  }).then((err,rs)=>{
-    console.log(rs);
-  });
-  var check=require('./database/login');
-  console.log(check(req.body));
-  res.render('login');
+      find(req.body,function(rs){
+        if(rs){
+            res.render('registry',{state:"exist"});
+        }
+        else{
+            var check=require('./database/registry.js');
+            console.log(check(req.body));
+            res.render('dangnhap',{title:"hello",state:"ok"});
+        }
+      })
   }
   catch(e){
     res.render('registry',{state:"fail"});
